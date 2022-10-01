@@ -1,3 +1,22 @@
 <resources>
-    <string name="app_name">SagerealSoundRecorder</string>
+    <string name="app_name">录音机</string>
+    <string name="record_list">录音列表</string>
+    <string name="settings">设置</string>
+    <string name="handset_mode">handset_mode</string>
+    <string name="handset_mode_title">听筒模式</string>
+    <string name="prompt_rename">prompt_rename</string>
+    <string name="prompt_rename_title">录音结束提示重命名</string>
+    <string name="recording_format">recording_format</string>
+    <string name="recording_format_title">录音模式</string>
+    <string name="version_name">version_name</string>
+    <string name="version_name_title">版本信息</string>
+
+
+    <string name="default_value">AAC</string>
+    <array name="format_array_entries">
+        <item>AAC</item>
+        <item>MP3</item>
+        <item>WAV</item>
+    </array>
+    <string name="get_version_name_fail">获取版本号失败</string>
 </resources>

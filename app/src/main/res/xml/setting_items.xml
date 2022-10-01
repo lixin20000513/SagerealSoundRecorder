@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:key="@string/handset_mode"
+        android:title="@string/handset_mode_title"
+        android:defaultValue="false"/>
+    <SwitchPreference
+        android:key="@string/prompt_rename"
+        android:title="@string/prompt_rename_title"
+        android:defaultValue="true"/>
+    <ListPreference
+        android:key="@string/recording_format"
+        android:title="@string/recording_format_title"
+        android:summary="@string/default_value"
+        android:entries="@array/format_array_entries"
+        android:defaultValue="@string/default_value"
+        android:entryValues="@array/format_array_entries"/>
+    <PreferenceScreen
+        android:key="@string/version_name"
+        android:title="@string/version_name_title"
+        android:summary="1.0" />
+</PreferenceScreen>
