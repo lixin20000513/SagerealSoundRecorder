@@ -90,12 +90,12 @@ public class PermissionUtil {
     public void showDialogTipUserGotoAppSetting(Activity context) {
         DialogUtil.showNormalDialog(context, context.getString(R.string.permission_not_available), context.getString(R.string.jump_save_permission),
                 context.getString(R.string.cancel),
-                (DialogUtil.OnLeftClickListener) () -> {
+                () -> {
                     //取消
                     context.finish();
                 },
                 context.getString(R.string.confirm),
-                (DialogUtil.OnRightClickListener) () -> {
+                () -> {
                     //跳转到设置界面
                     StartSystemPageUtil.goToAppSetting(context);
                     context.finish();
