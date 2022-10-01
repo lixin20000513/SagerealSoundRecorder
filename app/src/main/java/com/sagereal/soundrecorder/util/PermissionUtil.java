@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.sagereal.soundrecorder.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,11 +88,14 @@ public class PermissionUtil {
      * 提示用户去手动设置权限
      */
     public void showDialogTipUserGotoAppSetting(Activity context) {
-        DialogUtil.showNormalDialog(context, "权限不可用", "请在-应用设置-权限-中，允许使用存储权限来保存用户数据", "取消",
+        DialogUtil.showNormalDialog(context, context.getString(R.string.permission_not_available), context.getString(R.string.jump_save_permission),
+                context.getString(R.string.cancel),
                 (DialogUtil.OnLeftClickListener) () -> {
                     //取消
                     context.finish();
-                }, "确定", (DialogUtil.OnRightClickListener) () -> {
+                },
+                context.getString(R.string.confirm),
+                (DialogUtil.OnRightClickListener) () -> {
                     //跳转到设置界面
                     StartSystemPageUtil.goToAppSetting(context);
                     context.finish();

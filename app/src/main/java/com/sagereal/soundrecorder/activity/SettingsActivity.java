@@ -91,14 +91,11 @@ public class SettingsActivity extends AppCompatActivity {
                         getString(R.string.recording_format), Constants.DEFAULT_STRING);
                 recordingFormat.setValue(currentFormat);
                 recordingFormat.setSummary(currentFormat);
-                recordingFormat.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                        String format = newValue.toString();
-                        recordingFormat.setSummary(format);
-                        recordingFormat.setValue(format);
-                        return false;
-                    }
+                recordingFormat.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String format = newValue.toString();
+                    recordingFormat.setSummary(format);
+                    recordingFormat.setValue(format);
+                    return false;
                 });
             }
             if (versionName != null) {

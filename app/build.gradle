@@ -40,4 +40,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'androidx.navigation:navigation-fragment:2.5.2'
     implementation 'androidx.navigation:navigation-ui:2.5.2'
+    implementation 'com.github.zhaolewei:ZlwAudioRecorder:v1.08'
 }

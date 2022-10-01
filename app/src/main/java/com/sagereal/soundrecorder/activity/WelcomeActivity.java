@@ -1,12 +1,9 @@
 package com.sagereal.soundrecorder.activity;
 
-import static android.service.controls.ControlsProviderService.TAG;
 
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 

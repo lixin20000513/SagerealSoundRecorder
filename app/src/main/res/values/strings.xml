@@ -10,6 +10,10 @@
     <string name="recording_format_title">Recording Mode</string>
     <string name="version_name">version_name</string>
     <string name="version_name_title">Version Information</string>
+    <string name="permission_not_available">Permission not available</string>
+    <string name="jump_save_permission">Jump save permission</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
 
 
     <string name="default_value">AAC</string>

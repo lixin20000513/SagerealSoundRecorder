@@ -2,8 +2,6 @@ package com.sagereal.soundrecorder.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBind = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
+
 
         //设置标题
         setSupportActionBar(mBind.toolbar);
