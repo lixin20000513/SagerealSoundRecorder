@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaRecorder;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -17,6 +18,7 @@ import com.sagereal.soundrecorder.application.Application;
 import com.zlw.main.recorderlib.RecordManager;
 import com.zlw.main.recorderlib.recorder.RecordConfig;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -41,6 +43,10 @@ public class RecorderService extends Service {
          * 参数2： 是否打印日志
          */
         RecordManager.getInstance().init(Application.getInstance(), false);
+
+        //文件保存地址
+        File file = new File(getFilesDir().getAbsolutePath() + "/SoundRecorder");
+        RecordManager.getInstance().changeRecordDir(file.toString());
 
         //设置时间格式
         calSdf = new SimpleDateFormat("HH:mm:ss");
@@ -132,7 +138,7 @@ public class RecorderService extends Service {
         //开始录音
         RecordManager.getInstance().start();
         //开启子线程
-        thread.start();
+        new Thread(thread).start();
         isAlive = true;
     }
 

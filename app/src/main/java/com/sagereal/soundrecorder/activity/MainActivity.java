@@ -17,6 +17,7 @@ import androidx.preference.PreferenceManager;
 
 import com.sagereal.soundrecorder.R;
 import com.sagereal.soundrecorder.application.Application;
+import com.sagereal.soundrecorder.constant.Constants;
 import com.sagereal.soundrecorder.databinding.ActivityMainBinding;
 import com.sagereal.soundrecorder.service.RecorderService;
 import com.zlw.main.recorderlib.RecordManager;
@@ -170,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                 //停止录音
                 mBind.record.setImageResource(R.drawable.ic_stop);
                 recorderService.stopRecord();
+                //重置录音时间
+                mBind.time.setText(Constants.DEFAULT_TIME);
                 //stopRecord();
                 isRecord = true;
             }
