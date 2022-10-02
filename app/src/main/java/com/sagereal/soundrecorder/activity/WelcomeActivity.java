@@ -47,8 +47,6 @@ public class WelcomeActivity extends AppCompatActivity {
     PermissionUtil.OnPermissionCallbackListener onPermissionListener = new PermissionUtil.OnPermissionCallbackListener() {
         @Override
         public void onGranted() {
-            //判断是否有有应用文件夹，没有则创建
-            createAppDir();
             //跳转到主界面
             goMainActivity();
         }
@@ -58,13 +56,6 @@ public class WelcomeActivity extends AppCompatActivity {
             PermissionUtil.getInstance().showDialogTipUserGotoAppSetting(WelcomeActivity.this);
         }
     };
-
-    public void createAppDir() {
-        //创建应用文件夹
-        File recordDir = new File(getFilesDir(), "record");
-        //存放路径
-        String path = recordDir.getAbsolutePath();
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
