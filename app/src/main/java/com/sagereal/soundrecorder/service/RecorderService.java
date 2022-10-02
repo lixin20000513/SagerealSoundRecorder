@@ -87,8 +87,8 @@ public class RecorderService extends Service {
      * 计算时间为指定格式
      */
     private String callTime(int mSecond) {
-        mSecond = 8 * 60 * 60 * 1000;
-        String format = calSdf.format(new Date(mSecond));
+        int UTC = 8 * 60 * 60 * 1000;
+        String format = calSdf.format(new Date(mSecond - UTC));
         return format;
     }
 
