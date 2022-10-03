@@ -1,48 +1,59 @@
 package com.sagereal.soundrecorder.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
 import com.sagereal.soundrecorder.R;
-import com.sagereal.soundrecorder.application.Application;
-import com.sagereal.soundrecorder.constant.Constants;
 import com.sagereal.soundrecorder.databinding.ActivityMainBinding;
 import com.sagereal.soundrecorder.service.RecorderService;
+import com.sagereal.soundrecorder.util.FileUtils;
 import com.zlw.main.recorderlib.RecordManager;
-import com.zlw.main.recorderlib.recorder.RecordConfig;
+import com.zlw.main.recorderlib.recorder.listener.RecordResultListener;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding mBind;
-    SharedPreferences sharedPreferences;
-    private boolean isRecord = true;
-    private Boolean isRename = true;
-    private String recordMode;
+    SharedPreferences mSharedPreferences;
+    private boolean isRecord = false;
     private SimpleDateFormat calSdf;
     private int time;
     final RecordManager recordManager = RecordManager.getInstance();
     private RecorderService recorderService;
+    private Dialog mRenameDialog;
+    private final byte[] resetByte = new byte[]{};
+    private final String resetTime = "00:00:00";
 
     RecorderService.OnRefreshUIThreadListener refreshUIListener = new RecorderService.OnRefreshUIThreadListener() {
         @Override
         public void OnRefresh(String time) {
             mBind.time.setText(time);
+        }
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void clearUI() {
+            mBind.time.setText("00:00:00");
         }
     };
 
@@ -60,9 +71,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
-
     @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,111 +78,82 @@ public class MainActivity extends AppCompatActivity {
         mBind = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         Intent intent = new Intent(this, RecorderService.class);
-        bindService(intent,connection,BIND_AUTO_CREATE);
-
-
-        /**
-         * @deprecated 初始化录音管理器
-         * 参数1： Application 实例
-         * 参数2： 是否打印日志
-         */
-        //RecordManager.getInstance().init(Application.getInstance(), false);
-
-        //设置时间格式
-        //calSdf = new SimpleDateFormat("HH:mm:ss");
-
-
+        bindService(intent, connection, BIND_AUTO_CREATE);
         //设置标题
         setSupportActionBar(mBind.toolbar);
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setTitle(getString(R.string.app_name));
         }
-
+        mRenameDialog = new Dialog(this, R.style.dialogStyle);
+        mRenameDialog.setCancelable(false);
+        mRenameDialog.setCanceledOnTouchOutside(false);
+        Window window = mRenameDialog.getWindow();
+        window.setGravity(Gravity.BOTTOM);      //位于底部
+        window.setWindowAnimations(R.style.dialog_share);    //弹出动画
+        View inflate = View.inflate(this, R.layout.dialog_rename, null);
+        window.setContentView(inflate);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
         //初始化
         click();
     }
 
-
-//    /**
-//     * 设置更新Activity的UI界面的回调接口
-//     */
-//    public interface OnRefreshUIThreadListener {
-//        void OnRefresh(String time);
-//    }
-//
-//    private OnRefreshUIThreadListener onRefreshUIThreadListener;
-//
-//    public void setOnRefreshUIThreadListener(OnRefreshUIThreadListener onRefreshUIThreadListener) {
-//        this.onRefreshUIThreadListener = onRefreshUIThreadListener;
-//    }
-//
-//    Handler handler = new Handler(new Handler.Callback() {
-//        @Override
-//        public boolean handleMessage(@NonNull Message message) {
-//            time += 1000;
-//            if (onRefreshUIThreadListener != null) {
-//                String timeStr = callTime(time);
-//                onRefreshUIThreadListener.OnRefresh(timeStr);
-//                mBind.time.setText(timeStr);
-//            }
-//            return false;
-//        }
-//    });
-//
-//    /**
-//     * 计算时间为指定格式
-//     */
-//    private String callTime(int mSecond) {
-//        mSecond = 8 * 60 * 60 * 1000;
-//        return calSdf.format(new Date(mSecond));
-//    }
-//
-//    /**
-//     * 开启子线程，实时获取录音时间，反馈给主线程
-//     */
-//    Thread thread = new Thread(new Runnable() {
-//        @Override
-//        public void run() {
-//            handler.sendEmptyMessage(0);
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    });
-
-    /**
-     * 获取录音参数
-     */
-    private void getRecordInfo() {
-        //获取设置
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        //录音结束后是否重命名(true为重命名，false为不重命名)
-        isRename = sharedPreferences.getBoolean("prompt_rename", true);
-        //录音模式(默认AAC)
-        recordMode = sharedPreferences.getString("recording_format", "AAC");
-    }
-
     private void click() {
         mBind.record.setOnClickListener(view -> {
-            if (isRecord) {
+            if (!isRecord) {
                 //开始录音
-                mBind.record.setImageResource(R.drawable.ic_record);
+                mBind.record.setImageResource(R.drawable.ic_stop);
                 recorderService.startRecord();
-                //startRecord();
                 //音频可视化数据监听
                 recordManager.setRecordFftDataListener(data -> mBind.audioView.setWaveData(data));
-                isRecord = false;
+
+                recordManager.setRecordResultListener(new RecordResultListener() {
+                    @Override
+                    public void onResult(File result) {
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        boolean isRename = sharedPreferences.getBoolean("prompt_rename", true);
+                        String path = result.getAbsolutePath();
+                        String[] names = path.split("/");
+                        String nameWithFormat = names[names.length - 1];
+                        String name = nameWithFormat.split("\\.")[0];
+                        if (isRename) {
+                            if (mRenameDialog != null) {
+                                EditText edtName = mRenameDialog.findViewById(R.id.name);
+                                edtName.setText(name);
+                                TextView commit = mRenameDialog.findViewById(R.id.commit);
+                                TextView delete = mRenameDialog.findViewById(R.id.delete);
+                                commit.setOnClickListener(view1 -> {
+                                    String newName = edtName.getText().toString().trim();
+                                    FileUtils.renameFile(result, newName);
+                                    mBind.time.setText(resetTime);
+                                    mBind.audioView.setWaveData(resetByte);
+                                    mRenameDialog.dismiss();
+                                });
+                                delete.setOnClickListener(view1 -> {
+                                    FileUtils.deleteFile(result);
+
+                                    mBind.time.setText(resetTime);
+                                    mBind.audioView.setWaveData(resetByte);
+                                    mRenameDialog.dismiss();
+                                });
+                                if (!mRenameDialog.isShowing()) {
+                                    mRenameDialog.show();
+                                }
+                            }
+                        } else {
+                            Toast.makeText(MainActivity.this,
+                                    String.format("录音创建成功\n%s", name), Toast.LENGTH_SHORT).show();
+                            mBind.time.setText(resetTime);
+                            mBind.audioView.setWaveData(resetByte);
+                        }
+                    }
+                });
+                isRecord = true;
             } else {
                 //停止录音
-                mBind.record.setImageResource(R.drawable.ic_stop);
+                mBind.record.setImageResource(R.drawable.ic_record);
                 recorderService.stopRecord();
-                //重置录音时间
-                mBind.time.setText(Constants.DEFAULT_TIME);
-                //stopRecord();
-                isRecord = true;
+                isRecord = false;
             }
         });
 
@@ -184,38 +163,6 @@ public class MainActivity extends AppCompatActivity {
         //设置
         mBind.settings.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
     }
-
-//    /**
-//     * 开始录音
-//     */
-//    private void startRecord() {
-//        //获取录音参数
-//        getRecordInfo();
-//        //设置录音模式
-//        switch (recordMode) {
-//            case "AAC":
-//                RecordManager.getInstance().changeFormat(RecordConfig.RecordFormat.PCM);
-//                break;
-//            case "WAV":
-//                RecordManager.getInstance().changeFormat(RecordConfig.RecordFormat.WAV);
-//                break;
-//            case "MP3":
-//                RecordManager.getInstance().changeFormat(RecordConfig.RecordFormat.MP3);
-//                break;
-//            default:
-//                break;
-//        }
-//        //开始录音
-//        RecordManager.getInstance().start();
-//        thread.start();
-//    }
-//
-//    /**
-//     * 停止录音
-//     */
-//    private void stopRecord() {
-//        RecordManager.getInstance().stop();
-//    }
 
     @Override
     protected void onDestroy() {

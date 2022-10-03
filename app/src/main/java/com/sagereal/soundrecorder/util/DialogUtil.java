@@ -1,8 +1,8 @@
 package com.sagereal.soundrecorder.util;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-
 public class DialogUtil {
 
     public interface OnLeftClickListener {
@@ -13,9 +13,9 @@ public class DialogUtil {
         void onRightClick();
     }
 
-    public static void showNormalDialog(Context context, String title, String msg,
-                                        String leftBtn, OnLeftClickListener leftClickListener,
-                                        String rightBtn, OnRightClickListener rightClickListener) {
+    public static Dialog getNormalDialog(Context context, String title, String msg,
+                                         String leftBtn, OnLeftClickListener leftClickListener,
+                                         String rightBtn, OnRightClickListener rightClickListener) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title).setMessage(msg);
@@ -30,7 +30,7 @@ public class DialogUtil {
                 rightClickListener.onRightClick();
             }
         });
-        builder.create().show();
+        return builder.create();
     }
 
 }

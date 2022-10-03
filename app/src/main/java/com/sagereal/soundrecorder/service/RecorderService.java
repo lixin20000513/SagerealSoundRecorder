@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaRecorder;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -17,22 +16,20 @@ import androidx.preference.PreferenceManager;
 import com.sagereal.soundrecorder.application.Application;
 import com.zlw.main.recorderlib.RecordManager;
 import com.zlw.main.recorderlib.recorder.RecordConfig;
+import com.zlw.main.recorderlib.recorder.RecordService;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class RecorderService extends Service {
 
     private SimpleDateFormat calSdf;
     private Boolean isAlive;
     SharedPreferences sharedPreferences;
-    private Boolean isRename = true;
     private String recordMode;
     private int time = 0;
 
-
-    @SuppressLint("SimpleDateFormat")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -44,12 +41,8 @@ public class RecorderService extends Service {
          */
         RecordManager.getInstance().init(Application.getInstance(), false);
 
-        //文件保存地址
-        File file = new File(getFilesDir().getAbsolutePath() + "/SoundRecorder");
-        RecordManager.getInstance().changeRecordDir(file.toString());
-
         //设置时间格式
-        calSdf = new SimpleDateFormat("HH:mm:ss");
+        calSdf = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
     }
 
     /**
@@ -58,8 +51,6 @@ public class RecorderService extends Service {
     private void getRecordInfo() {
         //获取设置
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        //录音结束后是否重命名(true为重命名，false为不重命名)
-        isRename = sharedPreferences.getBoolean("prompt_rename", true);
         //录音模式(默认AAC)
         recordMode = sharedPreferences.getString("recording_format", "AAC");
     }
@@ -69,6 +60,8 @@ public class RecorderService extends Service {
      */
     public interface OnRefreshUIThreadListener {
         void OnRefresh(String time);
+
+        void clearUI();
     }
 
     private OnRefreshUIThreadListener onRefreshUIThreadListener;
@@ -94,26 +87,13 @@ public class RecorderService extends Service {
      */
     private String callTime(int mSecond) {
         int UTC = 8 * 60 * 60 * 1000;
-        String format = calSdf.format(new Date(mSecond - UTC));
-        return format;
+        return calSdf.format(new Date(mSecond - UTC));
     }
 
     /**
      * 开启子线程，实时获取录音时间，反馈给主线程
      */
-    Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while (isAlive) {
-                handler.sendEmptyMessage(0);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    });
+    Thread thread;
 
     /**
      * 开始录音
@@ -138,7 +118,20 @@ public class RecorderService extends Service {
         //开始录音
         RecordManager.getInstance().start();
         //开启子线程
-        new Thread(thread).start();
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (isAlive) {
+                    handler.sendEmptyMessage(0);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        thread.start();
         isAlive = true;
     }
 
@@ -155,7 +148,7 @@ public class RecorderService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-       return new RecorderBinder();
+        return new RecorderBinder();
     }
 
     public class RecorderBinder extends Binder {

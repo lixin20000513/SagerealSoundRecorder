@@ -2,10 +2,12 @@
     <string name="app_name">Recorder</string>
     <string name="record_list">Recording List</string>
     <string name="settings">Setting</string>
-    <string name="handset_mode">handset_mode</string>
-    <string name="handset_mode_title">Handset Mode</string>
+    <string name="earpiece_mode">earpiece_mode</string>
+    <string name="earpiece_mode_title">Earpiece Mode</string>
+    <string name="earpiece_mode_summary">When turned on, the earpiece will play sound</string>
     <string name="prompt_rename">prompt_rename</string>
     <string name="prompt_rename_title">Recording end prompt rename</string>
+
     <string name="recording_format">recording_format</string>
     <string name="recording_format_title">Recording Mode</string>
     <string name="version_name">version_name</string>

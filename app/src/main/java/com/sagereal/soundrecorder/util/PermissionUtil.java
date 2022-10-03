@@ -1,22 +1,21 @@
 package com.sagereal.soundrecorder.util;
 
 
+import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
+import android.app.Dialog;
 import android.os.Build;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
+import androidx.fragment.app.FragmentActivity;
+import com.permissionx.guolindev.PermissionX;
 import com.sagereal.soundrecorder.R;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PermissionUtil {
     private static PermissionUtil checkPermissionUtil;
     private PermissionUtil() {}
+    Dialog permissionDialog;
     //权限请求码
     private final int mRequestCode = 100;
     public interface OnPermissionCallbackListener {
@@ -38,68 +37,56 @@ public class PermissionUtil {
         return checkPermissionUtil;
     }
 
-    public void OnRequestPermission(Activity context, String[] permissions, OnPermissionCallbackListener onPermissionCallbackListener) {
+    public void OnRequestPermission(FragmentActivity context, String[] permissions, OnPermissionCallbackListener onPermissionCallbackListener) {
         mOnPermissionCallbackListener = onPermissionCallbackListener;
         //判断手机版本6.0以上需要申请权限
-        if(Build.VERSION.SDK_INT >= 23) {
-            //创建一个集合，用来存放没有授权的权限
-            List<String> mPermissionList = new ArrayList<>();
-            //逐个判断权限是否授权
-            for (int i = 0; i < permissions.length; i++) {
-                int res = ContextCompat.checkSelfPermission(context, permissions[i]);
-                if(res != PackageManager.PERMISSION_GRANTED) {
-                    mPermissionList.add(permissions[i]);
+        if(Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            PermissionX.init(context).permissions(permissions).request((allGranted, grantedList, deniedList) -> {
+                if (allGranted) {
+                    mOnPermissionCallbackListener.onGranted();
+                } else {
+                    mOnPermissionCallbackListener.OnDenied(deniedList);
                 }
-            }
-            //判断集合是否为空，不为空则申请权限
-            if(mPermissionList.size() > 0) {
-                String[] permissions_arr = mPermissionList.toArray(new String[mPermissionList.size()]);
-                ActivityCompat.requestPermissions(context, permissions_arr, mRequestCode);
-            }else {
-                //权限已经全部授权
-                mOnPermissionCallbackListener.onGranted();
-            }
+            });
+        } else if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.R) {
+            //获取文件管理权限
+            List<String> newPermissions = new ArrayList<>(Arrays.asList(permissions));
+            newPermissions.add(0, Manifest.permission.MANAGE_EXTERNAL_STORAGE);
+            PermissionX.init(context).permissions(newPermissions).onExplainRequestReason((scope, deniedList) -> {
+                String msg = "需要获取该权限才能使用此app";
+                scope.showRequestReasonDialog(deniedList, msg, "允许", "拒绝");
+            }).request((allGranted, grantedList, deniedList) -> {
+                if (allGranted) {
+                    mOnPermissionCallbackListener.onGranted();
+                } else {
+                    mOnPermissionCallbackListener.OnDenied(deniedList);
+                }
+            });
         }
     }
-
-    public void onRequestPermissionsResult(Activity context, int requestCode, @NonNull String[] permissions, int[] grantResults) {
-        if (requestCode == mRequestCode) {
-            List<String> deniedPermissions = new ArrayList<>();
-            if (grantResults.length > 0) {
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        deniedPermissions.add(permissions[i]);
-                    }
-                }
-            }
-            if (deniedPermissions.size() == 0) {
-                mOnPermissionCallbackListener.onGranted();
-            }else {
-                mOnPermissionCallbackListener.OnDenied(deniedPermissions);
-            }
-        }else {
-            //所有权限都已经授权
-            mOnPermissionCallbackListener.onGranted();
-        }
-    }
-
 
     /**
      * 提示用户去手动设置权限
      */
     public void showDialogTipUserGotoAppSetting(Activity context) {
-        DialogUtil.showNormalDialog(context, context.getString(R.string.permission_not_available), context.getString(R.string.jump_save_permission),
+        permissionDialog = DialogUtil.getNormalDialog(context,context.getString(R.string.permission_not_available),
+                context.getString(R.string.jump_save_permission),
                 context.getString(R.string.cancel),
                 () -> {
-                    //取消
+                    permissionDialog.dismiss();
                     context.finish();
                 },
                 context.getString(R.string.confirm),
                 () -> {
                     //跳转到设置界面
                     StartSystemPageUtil.goToAppSetting(context);
+                    permissionDialog.dismiss();
                     context.finish();
                 });
+        if (!permissionDialog.isShowing()) {
+            permissionDialog.show();
+        }
     }
+
 
 }

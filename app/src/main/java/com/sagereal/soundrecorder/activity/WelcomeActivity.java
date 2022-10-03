@@ -2,17 +2,19 @@ package com.sagereal.soundrecorder.activity;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.sagereal.soundrecorder.R;
 import com.sagereal.soundrecorder.constant.Constants;
+import com.sagereal.soundrecorder.util.DialogUtil;
 import com.sagereal.soundrecorder.util.PermissionUtil;
+import com.sagereal.soundrecorder.util.StartSystemPageUtil;
 
-import java.io.File;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,13 +55,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
         @Override
         public void OnDenied(List<String> deniedPermissions) {
+            //提示用户手动设置权限
             PermissionUtil.getInstance().showDialogTipUserGotoAppSetting(WelcomeActivity.this);
         }
     };
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionUtil.getInstance().onRequestPermissionsResult(this,requestCode, permissions, grantResults);
-    }
 }

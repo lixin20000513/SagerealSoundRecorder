@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <SwitchPreference
-        android:key="@string/handset_mode"
-        android:title="@string/handset_mode_title"
+        android:key="@string/earpiece_mode"
+        android:title="@string/earpiece_mode_title"
+        android:summary="@string/earpiece_mode_summary"
         android:defaultValue="false"/>
     <SwitchPreference
         android:key="@string/prompt_rename"

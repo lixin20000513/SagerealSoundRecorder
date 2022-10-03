@@ -3,8 +3,9 @@
     <string name="app_name">录音机</string>
     <string name="record_list">录音列表</string>
     <string name="settings">设置</string>
-    <string name="handset_mode">handset_mode</string>
-    <string name="handset_mode_title">听筒模式</string>
+    <string name="earpiece_mode">earpiece_mode</string>
+    <string name="earpiece_mode_title">听筒模式</string>
+    <string name="earpiece_mode_summary">开启后将使用听筒播放声音</string>
     <string name="prompt_rename">prompt_rename</string>
     <string name="prompt_rename_title">录音结束提示重命名</string>
     <string name="recording_format">recording_format</string>

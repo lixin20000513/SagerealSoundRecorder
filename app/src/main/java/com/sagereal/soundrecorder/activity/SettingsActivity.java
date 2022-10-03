@@ -69,7 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void initView() {
-            handsetMode = findPreference(getString(R.string.handset_mode));
+            handsetMode = findPreference(getString(R.string.earpiece_mode));
             promptRename = findPreference(getString(R.string.prompt_rename));
             recordingFormat = findPreference(getString(R.string.recording_format));
             versionName = findPreference(getString(R.string.version_name));
@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void getInfo() {
             if (handsetMode != null) {
-                boolean isHandset = sharedPreferences.getBoolean(getString(R.string.handset_mode), false);
+                boolean isHandset = sharedPreferences.getBoolean(getString(R.string.earpiece_mode), false);
                 handsetMode.setChecked(isHandset);
             }
             if (promptRename != null) {
