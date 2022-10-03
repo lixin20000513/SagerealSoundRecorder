@@ -21,18 +21,21 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.preference.PreferenceManager;
+
 import com.sagereal.soundrecorder.R;
 import com.sagereal.soundrecorder.adapter.RecordListAdapter;
 import com.sagereal.soundrecorder.databinding.ActivityRecordListBinding;
 import com.sagereal.soundrecorder.entity.AudioFile;
 import com.sagereal.soundrecorder.util.DialogUtil;
 import com.sagereal.soundrecorder.util.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -45,7 +48,7 @@ public class RecordListActivity extends AppCompatActivity {
     List<AudioFile> mAudioList;
     RecordListAdapter mAdapter;
     String directoryFilePath;
-    Dialog permissionDialog;
+    Dialog deleteDialog;
     Dialog playDialog;
     boolean isPlay = false;
     MediaPlayer mMediaPlayer;
@@ -121,7 +124,8 @@ public class RecordListActivity extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 process = 0;
-                mediaPlayer.stop();
+                mediaPlayer.seekTo(process);
+                ///将mediaPlayer初始化封装，写在此处即可循环播放
             }
         });
 
@@ -147,7 +151,7 @@ public class RecordListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mMediaPlayer.isPlaying()) {
-                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
                     mMediaPlayer = null;
                 }
                 process = 0;
@@ -162,8 +166,8 @@ public class RecordListActivity extends AppCompatActivity {
                 process = 0;
                 playDialog.dismiss();
                 isPlay = false;
-                if (mMediaPlayer.isPlaying()) {
-                    mMediaPlayer.reset();
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.release();
                     mMediaPlayer = null;
                 }
             }
@@ -182,7 +186,6 @@ public class RecordListActivity extends AppCompatActivity {
                 ///滑动seekbar同时更改mediplayer的播放进度
                 process = seekBar.getProgress();
                 if(mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-                    int musicTime = process / 1000;
                     mMediaPlayer.seekTo(process);
                 }
             }
@@ -197,18 +200,18 @@ public class RecordListActivity extends AppCompatActivity {
 
     private void deleteAudio(int position) {
         String name = mAudioList.get(position).getFileName();
-        permissionDialog = DialogUtil.getNormalDialog(this, "删除录音",
+        deleteDialog = DialogUtil.getNormalDialog(this, "删除录音",
                 String.format("确定删除录音文件:%s", name), "取消",
-                () -> permissionDialog.dismiss(), "确定", () -> {
+                () -> deleteDialog.dismiss(), "确定", () -> {
                     String filePath = String.format(Locale.CHINA, "%s%s%s",
                             directoryFilePath, "/", name);
                     FileUtils.deleteFile(new File(filePath));
                     mAudioList.remove(position);
                     setAdapter();
-                    permissionDialog.dismiss();
+                    deleteDialog.dismiss();
                 });
-        if (!permissionDialog.isShowing()) {
-            permissionDialog.show();
+        if (!deleteDialog.isShowing()) {
+            deleteDialog.show();
         }
     }
 

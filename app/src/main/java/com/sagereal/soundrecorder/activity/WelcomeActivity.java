@@ -40,6 +40,7 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void run() {
                 startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+                finish();
             }
         };
         Timer timer = new Timer();

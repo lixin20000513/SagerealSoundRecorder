@@ -1,23 +1,17 @@
 package com.sagereal.soundrecorder.service;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
-
 import com.sagereal.soundrecorder.application.Application;
 import com.zlw.main.recorderlib.RecordManager;
 import com.zlw.main.recorderlib.recorder.RecordConfig;
-import com.zlw.main.recorderlib.recorder.RecordService;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
