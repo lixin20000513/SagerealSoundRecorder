@@ -106,12 +106,16 @@ public class RecordListActivity extends AppCompatActivity {
                 AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 audioManager.setSpeakerphoneOn(false);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+                    //3.0以上可以直接设置
                     audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
                 } else {
+                    //3.0以下需要通过设置声音路由来模拟
                     audioManager.setMode(AudioManager.MODE_IN_CALL);
                 }
                 mMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
                         .setLegacyStreamType(AudioManager.STREAM_VOICE_CALL).build());
+                //使用完后需要恢复默认设置
+                audioManager.setMode(AudioManager.MODE_NORMAL);
             }
             mMediaPlayer.setDataSource(filePath);
             mMediaPlayer.prepare();

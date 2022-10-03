@@ -2,18 +2,13 @@ package com.sagereal.soundrecorder.activity;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.sagereal.soundrecorder.R;
 import com.sagereal.soundrecorder.constant.Constants;
-import com.sagereal.soundrecorder.util.DialogUtil;
 import com.sagereal.soundrecorder.util.PermissionUtil;
-import com.sagereal.soundrecorder.util.StartSystemPageUtil;
 
 import java.util.List;
 import java.util.Timer;

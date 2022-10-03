@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
                                     mBind.time.setText(resetTime);
                                     mBind.audioView.setWaveData(resetByte);
                                     mRenameDialog.dismiss();
+                                    Toast.makeText(MainActivity.this,
+                                            String.format("录音创建成功\n%s", newName), Toast.LENGTH_SHORT).show();
                                 });
                                 delete.setOnClickListener(view1 -> {
                                     FileUtils.deleteFile(result);
