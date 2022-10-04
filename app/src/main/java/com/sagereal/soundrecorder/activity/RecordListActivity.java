@@ -58,7 +58,6 @@ public class RecordListActivity extends AppCompatActivity {
     int process = 0;
     AppCompatSeekBar seekBar;
     TextView tvCurrentTime;
-    private ListView mListView;
 
     private final RecordListAdapter.ItemClickListener itemClickListener = new RecordListAdapter.ItemClickListener() {
         @Override
@@ -116,13 +115,14 @@ public class RecordListActivity extends AppCompatActivity {
 
     private void playAudio(int position) {
         Log.e(TAG, "playAudio: 位置======>" + position);
-
+        //获取文件路径
         String filePath = String.format(Locale.CHINA, "%s%s%s",
                 directoryFilePath, "/", mAudioList.get(position).getFileName());
         mMediaPlayer = new MediaPlayer();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         try { ///初始化播放器，并开始播放
             mMediaPlayer.reset();
+            //判断扬声器还是听筒
             if (sharedPreferences.getBoolean("earpiece_mode", false)) {
                 AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 audioManager.setSpeakerphoneOn(false);
@@ -145,13 +145,11 @@ public class RecordListActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                process = 0;
-                mediaPlayer.seekTo(process);
-                ///将mediaPlayer初始化封装，写在此处即可循环播放
-            }
+        //设置播放进度
+        mMediaPlayer.setOnCompletionListener(mediaPlayer -> {
+            process = 0;
+            mediaPlayer.seekTo(process);
+            ///将mediaPlayer初始化封装，写在此处即可循环播放
         });
 
         playDialog = new Dialog(this, R.style.dialogStyle);
@@ -172,32 +170,29 @@ public class RecordListActivity extends AppCompatActivity {
         TextView tvTotalTime = inflate.findViewById(R.id.total_time);
         int totalTime = mMediaPlayer.getDuration() / 1000;
         tvTotalTime.setText(String.format("%s:%s", totalTime/60, totalTime%60));
-        inflate.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mMediaPlayer.isPlaying()) {
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                }
-                process = 0;
-                playDialog.dismiss();
-                isPlay = false;
-                deleteAudio(position);
+        //删除按钮
+        inflate.findViewById(R.id.delete).setOnClickListener(view -> {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.release();
+                mMediaPlayer = null;
             }
+            process = 0;
+            playDialog.dismiss();
+            isPlay = false;
+            deleteAudio(position);
         });
-        inflate.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                process = 0;
-                playDialog.dismiss();
-                isPlay = false;
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                }
+        //取消按钮
+        inflate.findViewById(R.id.cancel).setOnClickListener(view -> {
+            process = 0;
+            playDialog.dismiss();
+            isPlay = false;
+            if (mMediaPlayer != null) {
+                mMediaPlayer.release();
+                mMediaPlayer = null;
             }
         });
 
+        //进度条监听
         seekBar = inflate.findViewById(R.id.seekbar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -210,6 +205,7 @@ public class RecordListActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 ///滑动seekbar同时更改mediplayer的播放进度
                 process = seekBar.getProgress();
+                mMediaPlayer.seekTo(process);
                 if(mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                     mMediaPlayer.seekTo(process);
                 }
@@ -223,11 +219,15 @@ public class RecordListActivity extends AppCompatActivity {
         handle.sendEmptyMessage(1);
     }
 
+    ///删除音频文件
     private void deleteAudio(int position) {
         String name = mAudioList.get(position).getFileName();
-        deleteDialog = DialogUtil.getNormalDialog(this, "删除录音",
-                String.format("确定删除录音文件:%s", name), "取消",
-                () -> deleteDialog.dismiss(), "确定", () -> {
+        deleteDialog = DialogUtil.getNormalDialog(this, this.getString(R.string.delete_record),
+                String.format(this.getString(R.string.confirm_delete_record) + ":%s", name),
+                this.getString(R.string.cancel),
+                () -> deleteDialog.dismiss(),
+                this.getString(R.string.confirm),
+                () -> {
                     String filePath = String.format(Locale.CHINA, "%s%s%s",
                             directoryFilePath, "/", name);
                     FileUtils.deleteFile(new File(filePath));

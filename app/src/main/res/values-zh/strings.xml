@@ -17,6 +17,9 @@
     <string name="cancel">取消</string>
     <string name="confirm">确定</string>
     <string name="no_record_found">没有录音数据</string>
+    <string name="record_create_success">录音创建成功</string>
+    <string name="delete_record">删除录音</string>
+    <string name="confirm_delete_record">确定删除录音</string>
 
     <string name="default_value">AAC</string>
     <array name="format_array_entries">

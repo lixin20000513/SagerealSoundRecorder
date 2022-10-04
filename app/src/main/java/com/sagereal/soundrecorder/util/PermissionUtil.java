@@ -16,8 +16,6 @@ public class PermissionUtil {
     private static PermissionUtil checkPermissionUtil;
     private PermissionUtil() {}
     Dialog permissionDialog;
-    //权限请求码
-    private final int mRequestCode = 100;
     public interface OnPermissionCallbackListener {
         //权限全部允许
         void onGranted();

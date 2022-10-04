@@ -101,7 +101,6 @@ public class SettingsActivity extends AppCompatActivity {
             if (versionName != null) {
 
                 String packageName = mActivity.getPackageName();
-                String currentVersion;
                 PackageManager manager = mActivity.getPackageManager();
                 try {
                     PackageInfo info = manager.getPackageInfo(packageName, 0);
