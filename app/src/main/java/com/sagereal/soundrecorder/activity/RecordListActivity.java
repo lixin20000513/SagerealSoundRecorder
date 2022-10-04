@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,6 +36,7 @@ import com.sagereal.soundrecorder.databinding.ActivityRecordListBinding;
 import com.sagereal.soundrecorder.entity.AudioFile;
 import com.sagereal.soundrecorder.util.DialogUtil;
 import com.sagereal.soundrecorder.util.FileUtils;
+import com.sagereal.soundrecorder.util.PCMToAACUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,6 +78,22 @@ public class RecordListActivity extends AppCompatActivity {
         directoryFilePath = String.format(Locale.getDefault(), "%s/Record",
                 Environment.getExternalStorageDirectory().getAbsolutePath());
         mAudioList = FileUtils.getFilesFormDirectory(directoryFilePath);
+        //pcm转aac(临时方案)
+        mAudioList.forEach( mAudioFile -> {
+            if (mAudioFile.getFileName().endsWith(".pcm")) {
+                //pcm转aac
+                String pcmPath =  Environment.getExternalStorageDirectory() + "/Record/"+mAudioFile.getFileName();
+                String aacPath = pcmPath.replace(".pcm", ".aac");
+                PCMToAACUtil pcmToAACUtil =  new PCMToAACUtil(aacPath, pcmPath);
+                File pcmFile = new File(pcmPath);
+                //生成aac文件
+                pcmToAACUtil.readInputStream(pcmFile);
+                //删除pcm文件
+                FileUtils.deleteFile(pcmFile);
+                //更新文件名
+                mAudioFile.setFileName(mAudioFile.getFileName().replace(".pcm", ".aac"));
+            }
+        });
         setAdapter();
         //设置返回键
         setSupportActionBar(mBind.toolbar);
@@ -87,6 +105,7 @@ public class RecordListActivity extends AppCompatActivity {
     }
 
     private void setAdapter() {
+        Log.e(TAG, "setAdapter: " + mAudioList.size());
         mAdapter = new RecordListAdapter(this);
         mAdapter.setAudioFileList(mAudioList);
         mAdapter.setItemClickListener(itemClickListener);

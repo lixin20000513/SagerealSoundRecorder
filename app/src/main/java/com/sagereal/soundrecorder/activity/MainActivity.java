@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.View;
@@ -22,13 +23,17 @@ import androidx.preference.PreferenceManager;
 
 import com.sagereal.soundrecorder.R;
 import com.sagereal.soundrecorder.databinding.ActivityMainBinding;
+import com.sagereal.soundrecorder.entity.AudioFile;
 import com.sagereal.soundrecorder.service.RecorderService;
 import com.sagereal.soundrecorder.util.FileUtils;
+import com.sagereal.soundrecorder.util.PCMToAACUtil;
 import com.zlw.main.recorderlib.RecordManager;
 import com.zlw.main.recorderlib.recorder.listener.RecordResultListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
