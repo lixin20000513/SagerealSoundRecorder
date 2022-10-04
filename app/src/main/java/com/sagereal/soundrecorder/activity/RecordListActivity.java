@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -57,6 +58,7 @@ public class RecordListActivity extends AppCompatActivity {
     int process = 0;
     AppCompatSeekBar seekBar;
     TextView tvCurrentTime;
+    private ListView mListView;
 
     private final RecordListAdapter.ItemClickListener itemClickListener = new RecordListAdapter.ItemClickListener() {
         @Override
@@ -105,7 +107,7 @@ public class RecordListActivity extends AppCompatActivity {
     }
 
     private void setAdapter() {
-        Log.e(TAG, "setAdapter: " + mAudioList.size());
+        mBind.listItem.setEmptyView(mBind.noRecordFound);
         mAdapter = new RecordListAdapter(this);
         mAdapter.setAudioFileList(mAudioList);
         mAdapter.setItemClickListener(itemClickListener);

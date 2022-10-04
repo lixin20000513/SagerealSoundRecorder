@@ -16,6 +16,7 @@
     <string name="jump_save_permission">请在-应用设置-权限-中，允许使用存储权限来保存用户数据</string>
     <string name="cancel">取消</string>
     <string name="confirm">确定</string>
+    <string name="no_record_found">没有录音数据</string>
 
     <string name="default_value">AAC</string>
     <array name="format_array_entries">

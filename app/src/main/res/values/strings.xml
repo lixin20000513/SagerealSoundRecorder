@@ -16,6 +16,7 @@
     <string name="jump_save_permission">Jump save permission</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+    <string name="no_record_found">No Record Found</string>
 
 
     <string name="default_value">AAC</string>

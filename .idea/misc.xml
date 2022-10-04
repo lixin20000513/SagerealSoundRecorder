@@ -13,9 +13,10 @@
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/drawable/ic_settings.xml" value="0.2265" />
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/drawable/ic_stop.xml" value="0.2265" />
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/activity_record_list.xml" value="0.24947916666666667" />
+        <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/activity_record_list.xml" value="0.1" />
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/activity_settings.xml" value="0.24947916666666667" />
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/activity_welcome.xml" value="0.19947916666666668" />
+        <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/audio_listview_item.xml" value="0.24947916666666667" />
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/content_main.xml" value="0.19947916666666668" />
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/layout/layout.xml" value="0.24947916666666667" />
         <entry key="..\:/Code/Android/SagerealSoundRecorder/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.194" />
